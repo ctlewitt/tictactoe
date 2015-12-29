@@ -1,3 +1,4 @@
+#TEST!!
 #print board
 #print whose turn and ask for move
 #read in move
