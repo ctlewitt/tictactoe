@@ -1,4 +1,3 @@
-#TEST!!
 #print board
 #print whose turn and ask for move
 #read in move
@@ -72,6 +71,9 @@ def check_for_winner(player):
     #check cols
     #check diagonals
 
+def congratulate_winner(player):
+    print "Congratulations,", player, " you won!"
+
 fill_board()
 print "Welcome to TicTacToe"
 player = XES
@@ -83,4 +85,4 @@ while winner == "":
     print_board()
     get_move()
     check_for_winner(player)
-congradulate_winner()
+congratulate_winner(player)
