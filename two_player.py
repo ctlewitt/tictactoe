@@ -12,6 +12,7 @@
 EMPTY = " "
 XES = "X"
 OHS = "O"
+
 board = []
 winner = ""
 draw = False
@@ -93,6 +94,7 @@ def check_for_winner(player):
                 temp_player_wins = False
         if temp_player_wins:
             winner = temp_player
+            print "There is a winner: " + winner
             return
 
     #check diagonals
@@ -101,8 +103,16 @@ def check_for_winner(player):
     temp_player1_wins = True
     temp_player2_wins = True
     for index in range(0,3):
-
-    pass
+        if temp_player1 != board[index][index]:
+            temp_player1_wins = False
+        if temp_player2 != board[index][3-index-1]:
+            temp_player2_wins = False
+    if temp_player1_wins:
+        winner = temp_player1
+        return
+    if temp_player2_wins:
+        winner = temp_player2
+        return
 
 def congratulate_winner(player):
     print "Congratulations,", player, " you won!"
@@ -110,7 +120,7 @@ def congratulate_winner(player):
 def draw():
     for row in range(0,3):
         for col in range(0,3):
-            if board[row][col] != "":
+            if board[row][col] == EMPTY:
                 return False
     return True
 
