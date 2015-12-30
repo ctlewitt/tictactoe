@@ -28,6 +28,7 @@ class TicTacToe:
         self.num_moves = 0
         self.max_moves = self.size * self.size
         self.player = player
+        self.prev_move = ()
 
     # prints current state of board
     def print_board(self):
@@ -71,6 +72,7 @@ class TicTacToe:
                         valid_move = True
                         self.board[first_move][second_move] = self.player
                         self.num_moves += 1
+                        self.prev_move = (first_move, second_move)
                     else:
                         print "Invalid Move: please select an unoccupied space"
                 else:
@@ -78,49 +80,42 @@ class TicTacToe:
             else:
                 print "Invalid Move: please indicate 2 coordinates"
 
+    def check_winning_row(self, row):
+        for col in range(0,self.size):
+            if self.board[row][col] != self.player:
+                return False
+        return True
+
+    def check_winning_col(self, col):
+        for row in range(0,self.size):
+            if self.board[row][col] != self.player:
+                return False
+        return True
+
+    def check_winning_diag(self, row, col):
+        left_right_diag = False
+        right_left_diag = False
+        if (row == col):
+            left_right_diag = True
+            for index in range(0, self.size):
+                if self.board[index][index] != self.player:
+                    left_right_diag = False
+        if self.size - 1 - col == row:
+            right_left_diag = True
+            for index in range(0, self.size):
+                if self.board[index][self.size-1-index] != self.player:
+                    right_left_diag = False
+        return left_right_diag or right_left_diag
+
+#TODO update self.size throughout instead of 3
     # checks for winner and draw at same time
     def check_for_winner(self):
-        temp_player = ""
-        temp_player_wins = False
-        #check rows
-        for row in range(0,3):
-            temp_player = self.board[row][0]
-            temp_player_wins = True
-            for col in range(0,3):
-                if temp_player != self.board[row][col]:
-                    temp_player_wins = False
-            if temp_player_wins:
-                winner = temp_player
-                return
-
-        #check cols
-        for col in range(0,3):
-            temp_player = self.board[0][col]
-            temp_player_wins = True
-            for row in range(0,3):
-                if temp_player != self.board[row][col]:
-                    temp_player_wins = False
-            if temp_player_wins:
-                self.winner = temp_player
-                print "There is a winner: " + self.winner
-                return
-
-        #check diagonals
-        temp_player1 = self.board[0][0]
-        temp_player2 = self.board[0][2]
-        temp_player1_wins = True
-        temp_player2_wins = True
-        for index in range(0,3):
-            if temp_player1 != self.board[index][index]:
-                temp_player1_wins = False
-            if temp_player2 != self.board[index][3-index-1]:
-                temp_player2_wins = False
-        if temp_player1_wins:
-            self.winner = temp_player1
-            return
-        if temp_player2_wins:
-            self.winner = temp_player2
-            return
+        (row,col) = self.prev_move
+        found_winner = True
+        #check row, col, diagonal (if relevant)
+        if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
+            self.winner = self.player
+        return
 
     def congratulate_winner(self):
         print "Congratulations,", self.winner, " you won!"
