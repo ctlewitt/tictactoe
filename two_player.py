@@ -19,9 +19,9 @@ class TicTacToe:
     def __init__(self, size=3, player=XES):
         self.size = size
         self.board = []
-        for row in range(0,3):
+        for row in range(0,self.size):
             new_row = []
-            for col in range(0,3):
+            for col in range(0,self.size):
                 new_row.append(EMPTY)
             self.board.append(new_row)
         self.winner = EMPTY
@@ -33,19 +33,21 @@ class TicTacToe:
     # prints current state of board
     def print_board(self):
         self.print_board_row(0)
-        for row in range(1,3):
+        for row in range(1,self.size):
             print "---------"
             self.print_board_row(row)
 
     # helper function for print_board; prints one row
     def print_board_row(self,row):
         print self.board[row][0],
-        for col in range(1,3):
+        for col in range(1,self.size):
             print "|",
             print self.board[row][col],
         print
 
-#SWITCH STATEMENT OR ENUM WOULD BE BETTER.  COULD ALSO USE ENUM TO HANDLE VALID INPUT CHECKING TOO
+
+#TODO SWITCH STATEMENT OR ENUM WOULD BE BETTER.  COULD ALSO USE ENUM TO HANDLE VALID INPUT CHECKING TOO
+#TODO this is not compatible with multiple size boards
     # returns index of board indicated by A,B,or C
     @staticmethod
     def convert_to_move(character):
@@ -76,6 +78,7 @@ class TicTacToe:
                     else:
                         print "Invalid Move: please select an unoccupied space"
                 else:
+                    #TODO make comment board-resizeable compatible
                     print "Invalid Move: must be A-C followed by 1-3"
             else:
                 print "Invalid Move: please indicate 2 coordinates"
@@ -107,7 +110,6 @@ class TicTacToe:
                     right_left_diag = False
         return left_right_diag or right_left_diag
 
-#TODO update self.size throughout instead of 3
     # checks for winner and draw at same time
     def check_for_winner(self):
         (row,col) = self.prev_move
@@ -128,7 +130,8 @@ class TicTacToe:
 
 
 print "Welcome to TicTacToe"
-my_game = TicTacToe()
+size = input("What size board would you like to play with? (Enter 3-7) ")
+my_game = TicTacToe(size)
 while my_game.winner == EMPTY and not my_game.draw():
     if my_game.player == XES:
         my_game.player = OHS
