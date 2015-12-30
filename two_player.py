@@ -24,7 +24,7 @@ class TicTacToe:
             for col in range(0,3):
                 new_row.append(EMPTY)
             self.board.append(new_row)
-        self.winner = ""
+        self.winner = EMPTY
         self.num_moves = 0
         self.max_moves = self.size * self.size
         self.player = player
@@ -70,6 +70,7 @@ class TicTacToe:
                     if self.board[first_move][second_move] == EMPTY:
                         valid_move = True
                         self.board[first_move][second_move] = self.player
+                        self.num_moves += 1
                     else:
                         print "Invalid Move: please select an unoccupied space"
                 else:
@@ -124,17 +125,16 @@ class TicTacToe:
     def congratulate_winner(self):
         print "Congratulations,", self.winner, " you won!"
 
+    # checks if every space has been taken
     def draw(self):
-        for row in range(0,3):
-            for col in range(0,3):
-                if self.board[row][col] == EMPTY:
-                    return False
-        return True
+        if self.num_moves >= self.max_moves:
+            return True
+        return False
 
 
 print "Welcome to TicTacToe"
 my_game = TicTacToe()
-while my_game.winner == "" and not my_game.draw():
+while my_game.winner == EMPTY and not my_game.draw():
     if my_game.player == XES:
         my_game.player = OHS
     else:
@@ -144,7 +144,7 @@ while my_game.winner == "" and not my_game.draw():
     my_game.get_move()
     my_game.check_for_winner()
 my_game.print_board()
-if my_game.winner != "":
+if my_game.winner != EMPTY:
     my_game.congratulate_winner()
 else: #tie
     print "Tie!  Play again soon!"
