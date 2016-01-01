@@ -34,7 +34,7 @@ class TicTacToe:
     def print_board(self):
         self.print_board_row(0)
         for row in range(1,self.size):
-            print "---------"
+            print "-----"+"----" * (self.size-2)
             self.print_board_row(row)
 
     # helper function for print_board; prints one row
