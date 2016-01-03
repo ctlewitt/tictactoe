@@ -13,6 +13,8 @@ import re
 EMPTY = " "
 XES = "X"
 OHS = "O"
+MIN_BOARD = 3
+MAX_BOARD = 26
 
 class TicTacToe:
 
@@ -37,6 +39,7 @@ class TicTacToe:
         for row in range(1,self.size):
             print "-----"+"----" * (self.size-2)
             self.print_board_row(row)
+        print
 
     # helper function for print_board; prints one row
     def print_board_row(self,row):
@@ -119,17 +122,29 @@ class TicTacToe:
             return True
         return False
 
+    @staticmethod
+    def get_size():
+        valid_size = False
+        while not valid_size:
+            size = input("What size board would you like to play with? (Enter " + str(MIN_BOARD) + "-" + str(MAX_BOARD) +") ")
+            if MIN_BOARD <= size <= MAX_BOARD:
+                valid_size = True
+                return size
+
+    def trade_turns(self):
+        if my_game.player == XES:
+            my_game.player = OHS
+        else:
+            my_game.player = XES
+
 
 print "Welcome to TicTacToe"
-size = input("What size board would you like to play with? (Enter 3-7) ")
+size = TicTacToe.get_size()
+
 my_game = TicTacToe(size)
 while my_game.winner == EMPTY and not my_game.draw():
-    if my_game.player == XES:
-        my_game.player = OHS
-    else:
-        my_game.player = XES
+    my_game.trade_turns()
     my_game.print_board()
-    print
     my_game.get_move()
     my_game.check_for_winner()
 my_game.print_board()
