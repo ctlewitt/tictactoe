@@ -46,17 +46,10 @@ class TicTacToe:
         print
 
 
-#TODO SWITCH STATEMENT OR ENUM WOULD BE BETTER.  COULD ALSO USE ENUM TO HANDLE VALID INPUT CHECKING TOO
-#TODO this is not compatible with multiple size boards
     # returns index of board indicated by A,B,or C
     @staticmethod
     def convert_to_move(character):
-        if character == 'A':
-            return 0
-        if character == 'B':
-            return 1
-        if character == 'C':
-            return 2
+        return ord(character) - ord('A')
 
     #requests and validates player's next move; once valid move received, records move
     def get_move(self):
