@@ -1,3 +1,4 @@
+import re
 #print board
 #print whose turn and ask for move
 #read in move
@@ -59,10 +60,11 @@ class TicTacToe:
         while not valid_move:
             move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3): ")
             #check_move
-            if len(move) == 2:
-                if (valid_first_moves.__contains__(move[0])) and (valid_second_moves.__contains__(move[1])):
-                    first_move = TicTacToe.convert_to_move(move[0])
-                    second_move = int(move[1]) - 1
+            result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
+            if result is not None:
+                first_move = TicTacToe.convert_to_move(result.group(1))
+                second_move = int(result.group(2)) - 1
+                if (first_move >= 0 and first_move < self.size) and (second_move >= 0 and second_move < self.size):
                     if self.board[first_move][second_move] == EMPTY:
                         valid_move = True
                         self.board[first_move][second_move] = self.player
@@ -71,10 +73,10 @@ class TicTacToe:
                     else:
                         print "Invalid Move: please select an unoccupied space"
                 else:
-                    #TODO make comment board-resizeable compatible
-                    print "Invalid Move: must be A-C followed by 1-3"
+                    print "Invalid Move: must be A-"+ chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
             else:
-                print "Invalid Move: please indicate 2 coordinates"
+                print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+
 
     def check_winning_row(self, row):
         for col in range(0,self.size):
