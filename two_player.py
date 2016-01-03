@@ -1,14 +1,4 @@
 import re
-#print board
-#print whose turn and ask for move
-#read in move
-#verify legal move (correct input, square not taken)
-#make move
-#check if player won
-  #only need to check for wins connected to this move
-  #but the board is so small it doesn't matter
-#
-
 
 EMPTY = " "
 XES = "X"
@@ -16,8 +6,8 @@ OHS = "O"
 MIN_BOARD = 3
 MAX_BOARD = 26
 
-class TicTacToe:
 
+class TicTacToe:
     # initializes TicTacToe game based on size
     def __init__(self, size=3, player=XES):
         self.size = size
@@ -138,6 +128,17 @@ class TicTacToe:
             my_game.player = XES
 
 
+
+#get size of board
+#while game still being played
+    #print board
+    #print whose turn and ask for move
+    #read in move
+    #verify legal move (correct input, square not taken)
+    #make move
+    #check if player won or if there is a draw
+        #only need to check for wins connected to this move
+#print outcome of game
 print "Welcome to TicTacToe"
 size = TicTacToe.get_size()
 
