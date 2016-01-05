@@ -116,10 +116,18 @@ class TicTacToe:
     def get_size():
         valid_size = False
         while not valid_size:
-            size = input("What size board would you like to play with? (Enter " + str(MIN_BOARD) + "-" + str(MAX_BOARD) +") ")
-            if MIN_BOARD <= size <= MAX_BOARD:
-                valid_size = True
-                return size
+            size_input = raw_input("What size board would you like to play with? (Enter " +
+                               str(MIN_BOARD) + "-" + str(MAX_BOARD) + ") ")
+            result = re.match("^([0-9]+)$", size_input)
+            if result is not None:
+                size = int(result.group(1))
+                if MIN_BOARD <= size <= MAX_BOARD:
+                    valid_size = True
+                    return size
+                else:
+                    print "Size must be in range"
+            else:
+                print "Size must be a number"
 
     def trade_turns(self):
         if my_game.player == XES:
