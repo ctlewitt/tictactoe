@@ -22,6 +22,7 @@ class TicTacToe:
         self.max_moves = self.size * self.size
         self.player = player
         self.prev_move = ()
+        self.quit = False
 
     # prints current state of board
     def print_board(self):
@@ -49,24 +50,28 @@ class TicTacToe:
     def get_move(self):
         valid_move = False
         while not valid_move:
-            move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3): ")
+            move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
             # check_move
-            result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
-            if result is not None:
-                first_move = TicTacToe.convert_to_move(result.group(1))
-                second_move = int(result.group(2)) - 1
-                if 0 <= first_move < self.size and 0 <= second_move < self.size:
-                    if self.board[first_move][second_move] == EMPTY:
-                        valid_move = True
-                        self.board[first_move][second_move] = self.player
-                        self.num_moves += 1
-                        self.prev_move = (first_move, second_move)
-                    else:
-                        print "Invalid Move: please select an unoccupied space"
-                else:
-                    print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
+            if move == "Q" or move == "q":
+                valid_move = True
+                my_game.quit = True
             else:
-                print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+                result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
+                if result is not None:
+                    first_move = TicTacToe.convert_to_move(result.group(1))
+                    second_move = int(result.group(2)) - 1
+                    if 0 <= first_move < self.size and 0 <= second_move < self.size:
+                        if self.board[first_move][second_move] == EMPTY:
+                            valid_move = True
+                            self.board[first_move][second_move] = self.player
+                            self.num_moves += 1
+                            self.prev_move = (first_move, second_move)
+                        else:
+                            print "Invalid Move: please select an unoccupied space"
+                    else:
+                        print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
+                else:
+                    print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
 
     def check_winning_row(self, row):
         for col in range(0,self.size):
@@ -97,11 +102,11 @@ class TicTacToe:
 
     # checks for winner and draw at same time
     def check_for_winner(self):
-        (row,col) = self.prev_move
-        # check row, col, diagonal (if relevant)
-        if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
-            self.winner = self.player
-        return
+        if not my_game.quit:
+            (row,col) = self.prev_move
+            # check row, col, diagonal (if relevant)
+            if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
+                self.winner = self.player
 
     def congratulate_winner(self):
         print "Congratulations,", self.winner, " you won!"
@@ -137,6 +142,7 @@ class TicTacToe:
 
 
 
+
 #get size of board
 #while game still being played
     #print board
@@ -149,15 +155,17 @@ class TicTacToe:
 #print outcome of game
 print "Welcome to TicTacToe"
 size = TicTacToe.get_size()
-
 my_game = TicTacToe(size)
-while my_game.winner == EMPTY and not my_game.draw():
-    my_game.trade_turns()
+while my_game.winner == EMPTY and not my_game.draw() and not my_game.quit:
     my_game.print_board()
     my_game.get_move()
     my_game.check_for_winner()
-my_game.print_board()
-if my_game.winner != EMPTY:
-    my_game.congratulate_winner()
-else: #tie
-    print "Tie!  Play again soon!"
+    my_game.trade_turns()
+if my_game.quit:
+    print "Too bad. Play again soon!"
+else:
+    my_game.print_board()
+    if my_game.winner != EMPTY:
+        my_game.congratulate_winner()
+    else: #tie
+        print "Tie!  Play again soon!"
