@@ -73,18 +73,21 @@ class TicTacToe:
                 else:
                     print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
 
+    #check if given row has winning move
     def check_winning_row(self, row):
         for col in range(0,self.size):
             if self.board[row][col] != self.player:
                 return False
         return True
 
+    #check if given column has winning move
     def check_winning_col(self, col):
         for row in range(0,self.size):
             if self.board[row][col] != self.player:
                 return False
         return True
 
+    #check if given move is in diagonal and if it causes a win
     def check_winning_diag(self, row, col):
         left_right_diag = False
         right_left_diag = False
@@ -108,6 +111,7 @@ class TicTacToe:
             if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
                 self.winner = self.player
 
+    # congratulate the winner
     def congratulate_winner(self):
         print "Congratulations,", self.winner, " you won!"
 
@@ -117,6 +121,7 @@ class TicTacToe:
             return True
         return False
 
+    #get the size of the board user wants to play on
     @staticmethod
     def get_size():
         valid_size = False
@@ -134,6 +139,7 @@ class TicTacToe:
             else:
                 print "Size must be a number"
 
+    # switch whose turn it is
     def trade_turns(self):
         if my_game.player == XES:
             my_game.player = OHS
@@ -142,17 +148,11 @@ class TicTacToe:
 
 
 
+# run game:
+# get size of board and prompt for moves until game complete,
+# printing the board, checking for win/draw/quit, and switching turns each time
+# print results
 
-#get size of board
-#while game still being played
-    #print board
-    #print whose turn and ask for move
-    #read in move
-    #verify legal move (correct input, square not taken)
-    #make move
-    #check if player won or if there is a draw
-        #only need to check for wins connected to this move
-#print outcome of game
 print "Welcome to TicTacToe"
 size = TicTacToe.get_size()
 my_game = TicTacToe(size)
