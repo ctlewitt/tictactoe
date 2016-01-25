@@ -1,17 +1,18 @@
 import re
 
-#testing which branch this goes to
-
 EMPTY = " "
 XES = "X"
 OHS = "O"
 MIN_BOARD = 3
 MAX_BOARD = 26
+COMPUTER_MODE = 1
+TWO_PLAYER_MODE = 2
 
 
 class TicTacToe:
     # initializes TicTacToe game based on size
-    def __init__(self, size=3, player=XES):
+    def __init__(self, game_type, size=3, player_xo_choice=XES):
+        self.game_type = game_type
         self.size = size
         self.board = []
         for row in range(0,self.size):
@@ -22,7 +23,13 @@ class TicTacToe:
         self.winner = EMPTY
         self.num_moves = 0
         self.max_moves = self.size * self.size
-        self.player = player
+        # whose turn it is
+        self.player = XES
+        # computer is OHS or XES (whatever person didn't pick)
+        if player_xo_choice == XES:
+            self.computer = OHS
+        else:
+            self.computer = XES
         self.prev_move = ()
         self.quit = False
 
@@ -50,30 +57,38 @@ class TicTacToe:
 
     #requests and validates player's next move; once valid move received, records move
     def get_move(self):
-        valid_move = False
-        while not valid_move:
-            move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
-            # check_move
-            if move == "Q" or move == "q":
-                valid_move = True
-                my_game.quit = True
-            else:
-                result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
-                if result is not None:
-                    first_move = TicTacToe.convert_to_move(result.group(1))
-                    second_move = int(result.group(2)) - 1
-                    if 0 <= first_move < self.size and 0 <= second_move < self.size:
-                        if self.board[first_move][second_move] == EMPTY:
-                            valid_move = True
-                            self.board[first_move][second_move] = self.player
-                            self.num_moves += 1
-                            self.prev_move = (first_move, second_move)
-                        else:
-                            print "Invalid Move: please select an unoccupied space"
-                    else:
-                        print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
+        if self.game_type == COMPUTER_MODE and self.player == self.computer:
+            # DO MINIMAX
+            print "time to implement minimax"
+        else:
+            valid_move = False
+            while not valid_move:
+                move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
+                # check_move
+                if move == "Q" or move == "q":
+                    valid_move = True
+                    my_game.quit = True
                 else:
-                    print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+                    result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
+                    if result is not None:
+                        first_move = TicTacToe.convert_to_move(result.group(1))
+                        second_move = int(result.group(2)) - 1
+                        if 0 <= first_move < self.size and 0 <= second_move < self.size:
+                            if self.board[first_move][second_move] == EMPTY:
+                                valid_move = True
+                                self.make_move(first_move, second_move)
+                            else:
+                                print "Invalid Move: please select an unoccupied space"
+                        else:
+                            print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
+                    else:
+                        print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+
+    #make given move
+    def make_move(self, first_move, second_move):
+        self.board[first_move][second_move] = self.player
+        self.num_moves +=1
+        self.prev_move = (first_move, second_move)
 
     #check if given row has winning move
     def check_winning_row(self, row):
@@ -115,7 +130,10 @@ class TicTacToe:
 
     # congratulate the winner
     def congratulate_winner(self):
-        print "Congratulations,", self.winner, " you won!"
+        if self.game_type == COMPUTER_MODE and self.winner == self.computer:
+            print "I win!  Play again soon!"
+        else:
+            print "Congratulations,", self.winner, " you won!"
 
     # checks if every space has been taken
     def draw(self):
@@ -141,6 +159,25 @@ class TicTacToe:
             else:
                 print "Size must be a number"
 
+    @staticmethod
+    def get_player_xo_choice():
+        while True:
+            player_xo_choice = raw_input("Do you want to be X or O (X goes first)? ").upper()
+            if player_xo_choice == "X" or player_xo_choice == "O":
+                return player_xo_choice
+            else:
+                print "Invalid choice.  Must choose 'X' or 'O'."
+
+    #find out if playing in 2 player mode or against computer
+    @staticmethod
+    def get_game_type():
+        while True:
+            game_type = int(raw_input("Enter 1 to play against computer or 2 to play in two player mode: "))
+            if game_type == 1 or game_type == 2:
+                return game_type
+            else:
+                print "You must select 1 or 2."
+
     # switch whose turn it is
     def trade_turns(self):
         if my_game.player == XES:
@@ -156,8 +193,16 @@ class TicTacToe:
 # print results
 
 print "Welcome to TicTacToe"
-size = TicTacToe.get_size()
-my_game = TicTacToe(size)
+# get mode, size, first player as appropriate and set up game
+game_type = TicTacToe.get_game_type()
+if game_type == TWO_PLAYER_MODE:
+    size = TicTacToe.get_size()
+    my_game = TicTacToe(game_type, size)
+else:
+    player_xo_choice = TicTacToe.get_player_xo_choice()
+    my_game = TicTacToe(game_type, MIN_BOARD, player_xo_choice)
+
+# play until someone wins or quits or there is a draw
 while my_game.winner == EMPTY and not my_game.draw() and not my_game.quit:
     my_game.print_board()
     my_game.get_move()
