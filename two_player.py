@@ -236,8 +236,8 @@ class TicTacToe:
     @staticmethod
     def get_game_type():
         while True:
-            game_type = int(raw_input("Enter 1 to play against computer or 2 to play in two player mode: "))
-            if game_type == 1 or game_type == 2:
+            game_type = raw_input("Enter 1 to play against computer or 2 to play in two player mode: ")
+            if game_type == "1" or game_type == "2":
                 return game_type
             else:
                 print "You must select 1 or 2."
