@@ -121,6 +121,7 @@ class TicTacToe:
                 if move == "Q" or move == "q":
                     valid_move = True
                     self.quit = True
+                    return
                 else:
                     result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
                     if result is not None:
