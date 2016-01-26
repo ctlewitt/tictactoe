@@ -77,7 +77,13 @@ class TicTacToe:
                     new_game.make_move(row, col)
                     new_game.get_score()
                     new_game.trade_turns()
-                    new_game_move, new_game_score = new_game.do_minimax()
+                    #new_game.player is wrong player
+                    key = (new_game.player, str(new_game.board))
+                    if not my_game.board_possibilities.has_key(key):
+                        new_game_move, new_game_score = new_game.do_minimax()
+                        my_game.board_possibilities[key] = new_game_move, new_game_score
+                    else:
+                        new_game_move, new_game_score = my_game.board_possibilities[key]
                     scores.append(((row, col), new_game_score))
         # computer's "turn": computer maximizes own score => get max
         if self.player == self.computer:
