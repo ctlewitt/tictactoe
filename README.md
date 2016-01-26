@@ -1,5 +1,5 @@
 # tictactoe
 
-TicTacToe game can be played with 2 players or against the computer. 
-
-In 2 player mode, you can choose your board size.  
+TicTacToe game versions:
+1) One player mode, against computer
+2) Two player mode, choosing your board size
