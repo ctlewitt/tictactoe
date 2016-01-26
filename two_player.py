@@ -63,12 +63,12 @@ class TicTacToe:
     def convert_to_move(character):
         return ord(character.capitalize()) - ord('A')
 
-    # MINIMAX
+    # improved minimax algorithm to calculate computer's best move
     def do_minimax(self):
-        # base case: if gameover, return move and score
+        # base case: if end game state, return move and score
         if self.score != NOT_OVER:
             return self.prev_move, self.score
-        # recursive step: make list of moves&scores and return min/max depending on
+        # recursive step: make list of possible moves&scores and return expected/best move&score
         scores = []
         for row in range(0, self.size):
             for col in range(0, self.size):
@@ -77,7 +77,9 @@ class TicTacToe:
                     new_game.make_move(row, col)
                     new_game.get_score()
                     new_game.trade_turns()
-                    #new_game.player is wrong player
+                    # don't need to calculate minimax for every game state every time;
+                    # same board with same next player's turn will return same minimax result
+                    # store board state&player and retrieve from dictionary if minimax already calculated
                     key = (new_game.player, str(new_game.board))
                     if not my_game.board_possibilities.has_key(key):
                         new_game_move, new_game_score = new_game.do_minimax()
@@ -94,8 +96,7 @@ class TicTacToe:
                     max_score = points
                     max_move = row_move, col_move
             return max_move, max_score
-
-        # person's "turn" computer minimizes person's score => get min
+        # person's "turn": they will likely pick best move for themselves (min from comp's perspective) => get min
         else:
             min_score = 2
             min_move = ()
@@ -106,22 +107,26 @@ class TicTacToe:
             return min_move, min_score
 
 
-
-    #requests and validates player's next move; once valid move received, records move
+    # gets player's next move; for computer, calculates best possible move
+    # for human, requests and validates player's next move;
+    # once valid move received/decided upon, makes move
     def get_move(self):
+        # computer's turn: calculates move
         if self.game_type == COMPUTER_MODE and self.player == self.computer:
             print "Computer's move: "
             temp_game = self.copy_game()
             ((first_move, second_move), score) = temp_game.do_minimax()
+        # human's turn
         else:
             valid_move = False
             while not valid_move:
                 move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
-                # check_move
+                # quit?
                 if move == "Q" or move == "q":
                     valid_move = True
                     self.quit = True
                     return
+                # checks for valid move and empty space
                 else:
                     result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
                     if result is not None:
@@ -130,13 +135,13 @@ class TicTacToe:
                         if 0 <= first_move < self.size and 0 <= second_move < self.size:
                             if self.board[first_move][second_move] == EMPTY:
                                 valid_move = True
-                                # moved this to end: self.make_move(first_move, second_move)
                             else:
                                 print "Invalid Move: please select an unoccupied space"
                         else:
                             print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
                     else:
                         print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+        # make move
         self.make_move(first_move, second_move)
 
     #make given move
@@ -183,6 +188,7 @@ class TicTacToe:
             if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
                 self.winner = self.player
 
+    # gets "score" from perspective of computer (for calculating best move choice)
     def get_score(self):
         self.check_for_winner()
         if self.winner != EMPTY:
@@ -224,6 +230,7 @@ class TicTacToe:
             else:
                 print "Size must be a number"
 
+    # get the person (playing against the computer)'s choice to be X or O
     @staticmethod
     def get_player_xo_choice():
         while True:
