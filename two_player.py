@@ -258,7 +258,6 @@ class TicTacToe:
             self.player = XES
 
 
-
 # run game:
 # get size of board and prompt for moves until game complete,
 # printing the board, checking for win/draw/quit, and switching turns each time
@@ -280,11 +279,13 @@ while my_game.winner == EMPTY and not my_game.draw() and not my_game.quit:
     my_game.get_move()
     my_game.check_for_winner()
     my_game.trade_turns()
+
+# game over: print result
 if my_game.quit:
     print "Too bad. Play again soon!"
 else:
     my_game.print_board()
-    if my_game.winner != EMPTY:
+    if my_game.winner != EMPTY:  # there is a winner
         my_game.congratulate_winner()
-    else: #tie
+    else:  # no winner: tie
         print "Tie!  Play again soon!"
