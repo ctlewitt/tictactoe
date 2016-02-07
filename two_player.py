@@ -1,5 +1,6 @@
 import re
 import copy
+import sys
 
 EMPTY = " "
 XES = "X"
@@ -8,7 +9,7 @@ MIN_BOARD = 3
 MAX_BOARD = 26
 COMPUTER_MODE = 1
 TWO_PLAYER_MODE = 2
-NOT_OVER = 52
+NOT_OVER = 52  # arbitrary number to represent the state of a game not being over when doing minimax
 
 
 class TicTacToe:
@@ -23,17 +24,18 @@ class TicTacToe:
                 new_row.append(EMPTY)
             self.board.append(new_row)
         self.winner = EMPTY
-        self.num_moves = 0
+        self.num_moves = 0  # keeps track of whether there is a draw
         self.max_moves = self.size * self.size
-        # whose turn it is
-        self.player = XES
+        self.player = XES  # whose turn it is
+        self.prev_move = ()
+        self.quit = False
+
+        # the following variables are only used when playing against the computer:
         # computer is OHS or XES (whatever person didn't pick)
         if player_xo_choice == XES:
             self.computer = OHS
         else:
             self.computer = XES
-        self.prev_move = ()
-        self.quit = False
         self.score = NOT_OVER
         self.board_possibilities = {}
 
@@ -57,12 +59,7 @@ class TicTacToe:
             print self.board[row][col],
         print
 
-
-    # returns index of board indicated by A,B,or C
-    @staticmethod
-    def convert_to_move(character):
-        return ord(character.capitalize()) - ord('A')
-
+    # only used when playing against computer
     # improved minimax algorithm to calculate computer's best move
     def do_minimax(self):
         # base case: if end game state, return move and score
@@ -89,7 +86,8 @@ class TicTacToe:
                     scores.append(((row, col), new_game_score))
         # computer's "turn": computer maximizes own score => get max
         if self.player == self.computer:
-            max_score = -2
+
+            max_score = -sys.maxsize - 1
             max_move = ()
             for ((row_move, col_move), points) in scores:
                 if points > max_score:
@@ -98,7 +96,8 @@ class TicTacToe:
             return max_move, max_score
         # person's "turn": they will likely pick best move for themselves (min from comp's perspective) => get min
         else:
-            min_score = 2
+
+            min_score = sys.maxsize
             min_move = ()
             for ((row_move, col_move), points) in scores:
                 if points < min_score:
@@ -106,8 +105,8 @@ class TicTacToe:
                     min_move = row_move, col_move
             return min_move, min_score
 
-
-    # gets player's next move; for computer, calculates best possible move
+    # gets player's next move;
+    # for computer, calculates best possible move
     # for human, requests and validates player's next move;
     # once valid move received/decided upon, makes move
     def get_move(self):
@@ -116,6 +115,7 @@ class TicTacToe:
             print "Computer's move: "
             temp_game = self.copy_game()
             ((first_move, second_move), score) = temp_game.do_minimax()
+
         # human's turn
         else:
             valid_move = False
@@ -144,27 +144,40 @@ class TicTacToe:
         # make move
         self.make_move(first_move, second_move)
 
-    #make given move
+    # helper function for get_move(): returns index of board indicated by A,B,C, etc
+    @staticmethod
+    def convert_to_move(character):
+        return ord(character.capitalize()) - ord('A')
+
+    # make given move
     def make_move(self, first_move, second_move):
         self.board[first_move][second_move] = self.player
         self.num_moves +=1
         self.prev_move = (first_move, second_move)
 
-    #check if given row has winning move
+    # checks for winner and draw at same time
+    def check_for_winner(self):
+        if not self.quit:
+            (row,col) = self.prev_move
+            # check row, col, diagonal (if relevant)
+            if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
+                self.winner = self.player
+
+    # helper to check if given row has winning move
     def check_winning_row(self, row):
         for col in range(0,self.size):
             if self.board[row][col] != self.player:
                 return False
         return True
 
-    #check if given column has winning move
+    # helper to check if given column has winning move
     def check_winning_col(self, col):
         for row in range(0,self.size):
             if self.board[row][col] != self.player:
                 return False
         return True
 
-    #check if given move is in diagonal and if it causes a win
+    # helper to check if given move is in diagonal and if it causes a win
     def check_winning_diag(self, row, col):
         left_right_diag = False
         right_left_diag = False
@@ -179,14 +192,6 @@ class TicTacToe:
                 if self.board[index][self.size-1-index] != self.player:
                     right_left_diag = False
         return left_right_diag or right_left_diag
-
-    # checks for winner and draw at same time
-    def check_for_winner(self):
-        if not self.quit:
-            (row,col) = self.prev_move
-            # check row, col, diagonal (if relevant)
-            if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
-                self.winner = self.player
 
     # gets "score" from perspective of computer (for calculating best move choice)
     def get_score(self):
