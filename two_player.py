@@ -9,8 +9,10 @@ MIN_BOARD = 3
 MAX_BOARD = 26
 COMPUTER_MODE = 1
 TWO_PLAYER_MODE = 2
-NOT_OVER = 52  # arbitrary number to represent the state of a game not being over when doing minimax
-
+NOT_OVER_SCORE = 52  # arbitrary number to represent the state of a game not being over when doing minimax
+COMPUTER_WINS_SCORE = 1
+HUMAN_WINS_SCORE = -1
+DRAW_SCORE = 0
 
 class TicTacToe:
     # initializes TicTacToe game based on size
@@ -36,7 +38,7 @@ class TicTacToe:
             self.computer = OHS
         else:
             self.computer = XES
-        self.score = NOT_OVER
+        self.score = NOT_OVER_SCORE
         self.board_possibilities = {}
 
     # copy constructor
@@ -63,7 +65,7 @@ class TicTacToe:
     # improved minimax algorithm to calculate computer's best move
     def do_minimax(self):
         # base case: if end game state, return move and score
-        if self.score != NOT_OVER:
+        if self.score != NOT_OVER_SCORE:
             return self.prev_move, self.score
         # recursive step: make list of possible moves&scores and return expected/best move&score
         scores = []
@@ -104,6 +106,17 @@ class TicTacToe:
                     min_score = points
                     min_move = row_move, col_move
             return min_move, min_score
+
+    # helper for minimax: gets "score" from perspective of computer (for calculating best move choice)
+    def get_score(self):
+        self.check_for_winner()
+        if self.winner != EMPTY:
+            if self.winner == self.computer:
+                self.score = COMPUTER_WINS_SCORE
+            elif self.winner != self.computer:
+                self.score = HUMAN_WINS_SCORE
+        elif self.draw():
+            self.score = DRAW_SCORE
 
     # gets player's next move;
     # for computer, calculates best possible move
@@ -192,17 +205,6 @@ class TicTacToe:
                 if self.board[index][self.size-1-index] != self.player:
                     right_left_diag = False
         return left_right_diag or right_left_diag
-
-    # gets "score" from perspective of computer (for calculating best move choice)
-    def get_score(self):
-        self.check_for_winner()
-        if self.winner != EMPTY:
-            if self.winner == self.computer:
-                self.score = 1
-            elif self.winner != self.computer:
-                self.score = -1
-        elif self.draw():
-            self.score = 0
 
     # congratulate the winner
     def congratulate_winner(self):

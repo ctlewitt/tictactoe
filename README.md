@@ -23,5 +23,4 @@ Possible improvements/features:<br>
         
         
 TODO: rename "two_player.py" since it includes code for playing against computer<br>
-TODO: should I add named constant for -1, 0, 1 being lose, draw, win?  
 TODO: research how accessing a global variable as self vs calling the global within a function works
