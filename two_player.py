@@ -266,10 +266,6 @@ class TicTacToe:
 
 
 # run game:
-# get size of board and prompt for moves until game complete,
-# printing the board, checking for win/draw/quit, and switching turns each time
-# print results
-
 print "Welcome to TicTacToe"
 # get mode, size, first player as appropriate and set up game
 game_type = TicTacToe.get_game_type()
