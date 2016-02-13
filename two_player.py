@@ -45,6 +45,44 @@ class TicTacToe:
     def copy_game(self):
         return copy.deepcopy(self)
 
+    #find out if playing in 2 player mode or against computer
+    @staticmethod
+    def get_game_type():
+        while True:
+            game_type = raw_input("Enter 1 to play against computer or 2 to play in two player mode: ")
+            if game_type == "1" or game_type == "2":
+                return int(game_type)
+            else:
+                print "You must select 1 or 2."
+
+    #get the size of the board user wants to play on
+    @staticmethod
+    def get_size():
+        valid_size = False
+        while not valid_size:
+            size_input = raw_input("What size board would you like to play with? (Enter " +
+                               str(MIN_BOARD) + "-" + str(MAX_BOARD) + ") ")
+            result = re.match("^([0-9]+)$", size_input)
+            if result is not None:
+                size = int(result.group(1))
+                if MIN_BOARD <= size <= MAX_BOARD:
+                    valid_size = True
+                    return size
+                else:
+                    print "Size must be in range"
+            else:
+                print "Size must be a number"
+
+    # get the person (playing against the computer)'s choice to be X or O
+    @staticmethod
+    def get_player_xo_choice():
+        while True:
+            player_xo_choice = raw_input("Do you want to be X or O (X goes first)? ").upper()
+            if player_xo_choice == "X" or player_xo_choice == "O":
+                return player_xo_choice
+            else:
+                print "Invalid choice.  Must choose 'X' or 'O'."
+
     # prints current state of board
     def print_board(self):
         self.print_board_row(0)
@@ -61,9 +99,59 @@ class TicTacToe:
             print self.board[row][col],
         print
 
-    # only used when playing against computer
+    # gets player's next move;
+    # for computer, calculates best possible move
+    # for human, requests and validates player's next move;
+    # once valid move received/decided upon, makes move
+    def get_move(self):
+        # computer's turn: calculates move
+        if self.game_type == COMPUTER_MODE and self.player == self.computer:
+            print "Computer's move: "
+            temp_game = self.copy_game()
+            ((first_move, second_move), score) = temp_game.do_minimax()
+        # human's turn
+        else:
+            valid_move = False
+            while not valid_move:
+                move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
+                # quit?
+                if move == "Q" or move == "q":
+                    valid_move = True
+                    self.quit = True
+                    return
+                # checks for valid move and empty space
+                else:
+                    result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
+                    if result is not None:
+                        first_move = TicTacToe.convert_to_move(result.group(1))
+                        second_move = int(result.group(2)) - 1
+                        if 0 <= first_move < self.size and 0 <= second_move < self.size:
+                            if self.board[first_move][second_move] == EMPTY:
+                                valid_move = True
+                            else:
+                                print "Invalid Move: please select an unoccupied space"
+                        else:
+                            print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
+                    else:
+                        print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
+        # make move
+        self.make_move(first_move, second_move)
+
+    # helper function for get_move(): returns index of board indicated by A,B,C, etc
+    @staticmethod
+    def convert_to_move(character):
+        return ord(character.capitalize()) - ord('A')
+
+    # make given move
+    def make_move(self, first_move, second_move):
+        self.board[first_move][second_move] = self.player
+        self.num_moves +=1
+        self.prev_move = (first_move, second_move)
+
+    # helper function for get_move(); only used when playing against computer
     # improved minimax algorithm to calculate computer's best move
     def do_minimax(self):
+        global my_game
         # base case: if end game state, return move and score
         if self.score != NOT_OVER_SCORE:
             return self.prev_move, self.score
@@ -118,60 +206,16 @@ class TicTacToe:
         elif self.draw():
             self.score = DRAW_SCORE
 
-    # gets player's next move;
-    # for computer, calculates best possible move
-    # for human, requests and validates player's next move;
-    # once valid move received/decided upon, makes move
-    def get_move(self):
-        # computer's turn: calculates move
-        if self.game_type == COMPUTER_MODE and self.player == self.computer:
-            print "Computer's move: "
-            temp_game = self.copy_game()
-            ((first_move, second_move), score) = temp_game.do_minimax()
-
-        # human's turn
-        else:
-            valid_move = False
-            while not valid_move:
-                move = raw_input(self.player + "'s move (enter coordinates like battleship. e.g., B3; Q to quit): ")
-                # quit?
-                if move == "Q" or move == "q":
-                    valid_move = True
-                    self.quit = True
-                    return
-                # checks for valid move and empty space
-                else:
-                    result = re.match('^([A-Z]|[a-z])([0-9]+)$',move)
-                    if result is not None:
-                        first_move = TicTacToe.convert_to_move(result.group(1))
-                        second_move = int(result.group(2)) - 1
-                        if 0 <= first_move < self.size and 0 <= second_move < self.size:
-                            if self.board[first_move][second_move] == EMPTY:
-                                valid_move = True
-                            else:
-                                print "Invalid Move: please select an unoccupied space"
-                        else:
-                            print "Invalid Move: must be A-" + chr(ord('A')+self.size - 1) + " followed by 1-" + str(self.size)
-                    else:
-                        print "Invalid Move: please indicate 2 coordinates (e.g., C2)"
-        # make move
-        self.make_move(first_move, second_move)
-
-    # helper function for get_move(): returns index of board indicated by A,B,C, etc
-    @staticmethod
-    def convert_to_move(character):
-        return ord(character.capitalize()) - ord('A')
-
-    # make given move
-    def make_move(self, first_move, second_move):
-        self.board[first_move][second_move] = self.player
-        self.num_moves +=1
-        self.prev_move = (first_move, second_move)
+    # checks if every space has been taken
+    def draw(self):
+        if self.num_moves >= self.max_moves:
+            return True
+        return False
 
     # checks for winner and draw at same time
     def check_for_winner(self):
         if not self.quit:
-            (row,col) = self.prev_move
+            (row, col) = self.prev_move
             # check row, col, diagonal (if relevant)
             if self.check_winning_row(row) or self.check_winning_col(col) or self.check_winning_diag(row,col):
                 self.winner = self.player
@@ -206,63 +250,19 @@ class TicTacToe:
                     right_left_diag = False
         return left_right_diag or right_left_diag
 
-    # congratulate the winner
-    def congratulate_winner(self):
-        if self.game_type == COMPUTER_MODE and self.winner == self.computer:
-            print "I win!  Play again soon!"
-        else:
-            print "Congratulations,", self.winner, " you won!"
-
-    # checks if every space has been taken
-    def draw(self):
-        if self.num_moves >= self.max_moves:
-            return True
-        return False
-
-    #get the size of the board user wants to play on
-    @staticmethod
-    def get_size():
-        valid_size = False
-        while not valid_size:
-            size_input = raw_input("What size board would you like to play with? (Enter " +
-                               str(MIN_BOARD) + "-" + str(MAX_BOARD) + ") ")
-            result = re.match("^([0-9]+)$", size_input)
-            if result is not None:
-                size = int(result.group(1))
-                if MIN_BOARD <= size <= MAX_BOARD:
-                    valid_size = True
-                    return size
-                else:
-                    print "Size must be in range"
-            else:
-                print "Size must be a number"
-
-    # get the person (playing against the computer)'s choice to be X or O
-    @staticmethod
-    def get_player_xo_choice():
-        while True:
-            player_xo_choice = raw_input("Do you want to be X or O (X goes first)? ").upper()
-            if player_xo_choice == "X" or player_xo_choice == "O":
-                return player_xo_choice
-            else:
-                print "Invalid choice.  Must choose 'X' or 'O'."
-
-    #find out if playing in 2 player mode or against computer
-    @staticmethod
-    def get_game_type():
-        while True:
-            game_type = raw_input("Enter 1 to play against computer or 2 to play in two player mode: ")
-            if game_type == "1" or game_type == "2":
-                return int(game_type)
-            else:
-                print "You must select 1 or 2."
-
     # switch whose turn it is
     def trade_turns(self):
         if self.player == XES:
             self.player = OHS
         else:
             self.player = XES
+
+    # congratulate the winner
+    def congratulate_winner(self):
+        if self.game_type == COMPUTER_MODE and self.winner == self.computer:
+            print "I win!  Play again soon!"
+        else:
+            print "Congratulations,", self.winner, " you won!"
 
 
 # run game:
