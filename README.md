@@ -4,9 +4,19 @@ TicTacToe game versions:<br>
 1) One player mode, against computer<br>
 2) Two player mode, choosing your board size<br>
 
-
 Possible improvements/features:<br>
-1) 3D tic tac toe<br>
+1) make an easier-to-beat computer player
+  A) Way computer could decide on next move
+    i) if computer can win in next move, do so
+    ii) if human will win in next move, computer blocks
+    ii) make random moves when no move "appeals"
+  B) Make levels
+    i) level 1: computer makes random moves
+    ii) level 2: computer uses its turn to win when possible and moves randomly otherwise
+    iii) level 3: computer wins when possible, blocks opponent otherwise, and otherwise moves randomly
+    iv) level 4: computer is unbeatable, using minimax calculations to make moves, either beating or tying with opponent
+        
+2) 3D tic tac toe<br>
   A) Better to implement win-checking generically, so it's easily scalable and not hard coded<br>
   B) Need good way to visualize and accept input<br>
     i) text based<br>
@@ -21,15 +31,4 @@ Possible improvements/features:<br>
     ii)Play against computer <br>
         a) This be very processing intensive. Might need to precompute game outcomes for computer's move selection.)<br>
 
-2) make an easier-to-beat computer player
-  A) Way computer could decide on next move
-    i) if computer can win in next move, do so
-    ii) if human will win in next move, computer blocks
-    ii) make random moves when no move "appeals"
-  B) Make levels
-    i) level 1: computer makes random moves
-    ii) level 2: computer uses its turn to win when possible and moves randomly otherwise
-    iii) level 3: computer wins when possible, blocks opponent otherwise, and otherwise moves randomly
-    iv) level 4: computer is unbeatable, using minimax calculations to make moves, either beating or tying with opponent
-        
 TODO: rename "two_player.py" since it includes code for playing against computer<br>
