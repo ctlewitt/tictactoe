@@ -30,7 +30,3 @@ def test_board_copy_after_move_should_fail():
         return
     raise pass_exception.PassException, "Passed: altered game board was unequal to original"
 
-
-#test_board_copy()
-#test_board_copy_after_move()
-#test_board_copy_after_move_should_fail()
