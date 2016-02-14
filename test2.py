@@ -1,5 +1,6 @@
 from two_player import TicTacToe
 import two_player
+import pass_exception
 
 
 def test_board_copy():
@@ -27,7 +28,7 @@ def test_board_copy_after_move_should_fail():
         assert game1.board != game2.board
     except AssertionError:
         return
-    raise Exception, "Passed: altered game board was unequal to original"
+    raise pass_exception.PassException, "Passed: altered game board was unequal to original"
 
 
 #test_board_copy()
