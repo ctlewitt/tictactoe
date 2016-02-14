@@ -2,7 +2,7 @@ from two_player import TicTacToe
 import two_player
 import unittest
 import test2
-import pass_exception
+from pass_exception import PassException
 
 class TicTacToeTest(unittest.TestCase):
     def test_board_copy(self):
@@ -22,7 +22,7 @@ class TicTacToeTest(unittest.TestCase):
 
     def test_exception_thrown(self):
         """Test that test_board_copy_after_move_should_fail raises and AssertionError"""
-        self.assertRaises(pass_exception.PassException, test2.test_board_copy_after_move_should_fail)
+        self.assertRaises(PassException, test2.test_board_copy_after_move_should_fail)
 
 #    def test
 
