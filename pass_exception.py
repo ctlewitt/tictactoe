@@ -1,4 +1,4 @@
 class PassException(Exception):
-#    def __init__(self, *args, **kwargs):
-#        Exception.__init__(self, *args, **kwargs)
+#    def __init__(self):
+#        Exception.__init__(self)
     pass
