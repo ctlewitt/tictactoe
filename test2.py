@@ -28,5 +28,3 @@ def test_board_copy_after_move_should_fail():
     except AssertionError:
         return
     raise PassException, "Passed: altered game board was unequal to original"
-
-test_board_copy_after_move_should_fail()

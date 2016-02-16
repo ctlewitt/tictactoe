@@ -18,18 +18,11 @@ class TicTacToe:
     HUMAN_WINS_SCORE = -1
     DRAW_SCORE = 0
 
-
     # initializes TicTacToe game based on size
     def __init__(self, game_type, size=MIN_BOARD, player_xo_choice=XES, difficulty=1):
         self.game_type = game_type
-        self.difficulty = difficulty
         self.size = size
-        self.board = []
-        for row in range(0,self.size):
-            new_row = []
-            for col in range(0,self.size):
-                new_row.append(TicTacToe.EMPTY)
-            self.board.append(new_row)
+        self.board = self.generate_board()
         self.winner = TicTacToe.EMPTY
         self.num_moves = 0  # keeps track of whether there is a draw
         self.max_moves = self.size * self.size
@@ -39,6 +32,7 @@ class TicTacToe:
 
         # the following variables are only used when playing against the computer:
         # computer is OHS or XES (whatever person didn't pick)
+        self.difficulty = difficulty
         if player_xo_choice == TicTacToe.XES:
             self.computer = TicTacToe.OHS
         else:
@@ -49,6 +43,16 @@ class TicTacToe:
     # copy constructor
     def copy_game(self):
         return copy.deepcopy(self)
+
+    # helper function for __init__: generates empty board
+    def generate_board(self):
+        board = []
+        for row in range(0,self.size):
+            new_row = []
+            for col in range(0,self.size):
+                new_row.append(TicTacToe.EMPTY)
+            board.append(new_row)
+        return board
 
     # find out if playing in 2 player mode or against computer
     @staticmethod
