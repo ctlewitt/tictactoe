@@ -2,19 +2,21 @@ import re
 import copy
 import sys
 
-EMPTY = " "
-XES = "X"
-OHS = "O"
-MIN_BOARD = 3
-MAX_BOARD = 26
-COMPUTER_MODE = 1
-TWO_PLAYER_MODE = 2
-NOT_OVER_SCORE = 52  # arbitrary number to represent the state of a game not being over when doing minimax
-COMPUTER_WINS_SCORE = 1
-HUMAN_WINS_SCORE = -1
-DRAW_SCORE = 0
 
 class TicTacToe:
+    EMPTY = " "
+    XES = "X"
+    OHS = "O"
+    MIN_BOARD = 3
+    MAX_BOARD = 26
+    COMPUTER_MODE = 1
+    TWO_PLAYER_MODE = 2
+    NOT_OVER_SCORE = 52  # arbitrary number to represent the state of a game not being over when doing minimax
+    COMPUTER_WINS_SCORE = 1
+    HUMAN_WINS_SCORE = -1
+    DRAW_SCORE = 0
+
+
     # initializes TicTacToe game based on size
     def __init__(self, game_type, size=3, player_xo_choice=XES):
         self.game_type = game_type
