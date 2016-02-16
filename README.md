@@ -32,3 +32,5 @@ Possible improvements/features:<br>
         a) This be very processing intensive. Might need to precompute game outcomes for computer's move selection.)<br>
 
 TODO: rename "two_player.py" since it includes code for playing against computer<br>
+TODO: make first computer move in middle of board for unbeatable version
+TODO:

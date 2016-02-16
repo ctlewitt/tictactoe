@@ -1,7 +1,9 @@
 import re
 import copy
 import sys
+import random
 
+my_game = None
 
 class TicTacToe:
     EMPTY = " "
@@ -18,8 +20,9 @@ class TicTacToe:
 
 
     # initializes TicTacToe game based on size
-    def __init__(self, game_type, size=3, player_xo_choice=XES):
+    def __init__(self, game_type, size=MIN_BOARD, player_xo_choice=XES, difficulty=1):
         self.game_type = game_type
+        self.difficulty = difficulty
         self.size = size
         self.board = []
         for row in range(0,self.size):
@@ -47,7 +50,7 @@ class TicTacToe:
     def copy_game(self):
         return copy.deepcopy(self)
 
-    #find out if playing in 2 player mode or against computer
+    # find out if playing in 2 player mode or against computer
     @staticmethod
     def get_game_type():
         while True:
@@ -57,7 +60,7 @@ class TicTacToe:
             else:
                 print "You must select 1 or 2."
 
-    #get the size of the board user wants to play on
+    # get the size of the board user wants to play on
     @staticmethod
     def get_size():
         valid_size = False
@@ -74,6 +77,24 @@ class TicTacToe:
                     print "Size must be in range"
             else:
                 print "Size must be a number"
+
+    # find out what difficulty level they want to play at
+    @staticmethod
+    def get_difficulty_choice():
+        valid_difficulty = False
+        while not valid_difficulty:
+            size_input = raw_input("What difficulty level do you want to play at? (Enter 1-4) ")
+            result = re.match("^([0-9]+)$", size_input)
+            if result is not None:
+                difficulty = int(result.group(1))
+                if 1 <= difficulty <= 4:
+                    valid_difficulty = True
+                    return difficulty
+                else:
+                    print "Difficulty must be in range"
+            else:
+                print "Difficulty must be a number"
+
 
     # get the person (playing against the computer)'s choice to be X or O
     @staticmethod
@@ -110,7 +131,7 @@ class TicTacToe:
         if self.game_type == TicTacToe.COMPUTER_MODE and self.player == self.computer:
             print "Computer's move: "
             temp_game = self.copy_game()
-            ((first_move, second_move), score) = temp_game.do_minimax()
+            (first_move, second_move) = temp_game.get_computer_move()
         # human's turn
         else:
             valid_move = False
@@ -150,10 +171,45 @@ class TicTacToe:
         self.num_moves +=1
         self.prev_move = (first_move, second_move)
 
+    # calculates the computer next move based on difficulty level
+    def get_computer_move(self):
+        # win, if possible
+        if 2 <= self.difficulty <=3:
+            for row in range(0,self.size):
+                for col in range(0, self.size):
+                    if self.board[row][col] == TicTacToe.EMPTY:
+                        game_copy = self.copy_game()
+                        game_copy.make_move(row, col)
+                        game_copy.check_for_winner()
+                        if game_copy.winner != TicTacToe.EMPTY:
+                            return row, col
+        # block an opponent (human) win, if they are about to win
+        if self.difficulty == 3:
+            for row in range(0,self.size):
+                for col in range(0, self.size):
+                    if self.board[row][col] == TicTacToe.EMPTY:
+                        game_copy = self.copy_game()
+                        game_copy.trade_turns()
+                        game_copy.make_move(row, col)
+                        game_copy.check_for_winner()
+                        if game_copy.winner != TicTacToe.EMPTY:
+                            return row, col
+        # random move, if no better move found already: loops until empty cell is found
+        if 1 <= self.difficulty <=3:
+            while True:
+                first_move = random.randint(0, self.size - 1)
+                second_move = random.randint(0, self.size - 1)
+                if self.board[first_move][second_move] == TicTacToe.EMPTY:
+                    return first_move, second_move
+        # gest best possible move using minimax algorithm for computer player
+        if self.difficulty == 4:
+            ((first_move, second_move), score) = self.do_minimax()
+            return first_move, second_move
+
     # helper function for get_move(); only used when playing against computer
     # improved minimax algorithm to calculate computer's best move
     def do_minimax(self):
-        global my_game
+#        global my_game
         # base case: if end game state, return move and score
         if self.score != TicTacToe.NOT_OVER_SCORE:
             return self.prev_move, self.score

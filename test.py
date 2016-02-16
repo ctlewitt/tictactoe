@@ -7,7 +7,7 @@ from pass_exception import PassException
 class TicTacToeTest(unittest.TestCase):
     def test_board_copy(self):
         """Test that once a copy of a game is made, the original and copy store game state independently"""
-        game1 = TicTacToe(two_player.TWO_PLAYER_MODE)
+        game1 = TicTacToe(TicTacToe.TWO_PLAYER_MODE)
         game2 = game1.copy_game()
         game1.make_move(1, 1)
         self.assertNotEqual (game1.board, game2.board)
@@ -15,7 +15,7 @@ class TicTacToeTest(unittest.TestCase):
 
     def test_board_copy_after_move(self):
         """Test that move is successfully copied with game"""
-        game1 = TicTacToe(two_player.TWO_PLAYER_MODE)
+        game1 = TicTacToe(TicTacToe.TWO_PLAYER_MODE)
         game1.make_move(1, 1)
         game2 = game1.copy_game()
         self.assertEqual(game1.board, game2.board)
