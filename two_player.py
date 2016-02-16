@@ -25,22 +25,22 @@ class TicTacToe:
         for row in range(0,self.size):
             new_row = []
             for col in range(0,self.size):
-                new_row.append(EMPTY)
+                new_row.append(TicTacToe.EMPTY)
             self.board.append(new_row)
-        self.winner = EMPTY
+        self.winner = TicTacToe.EMPTY
         self.num_moves = 0  # keeps track of whether there is a draw
         self.max_moves = self.size * self.size
-        self.player = XES  # whose turn it is
+        self.player = TicTacToe.XES  # whose turn it is
         self.prev_move = ()
         self.quit = False
 
         # the following variables are only used when playing against the computer:
         # computer is OHS or XES (whatever person didn't pick)
-        if player_xo_choice == XES:
-            self.computer = OHS
+        if player_xo_choice == TicTacToe.XES:
+            self.computer = TicTacToe.OHS
         else:
-            self.computer = XES
-        self.score = NOT_OVER_SCORE
+            self.computer = TicTacToe.XES
+        self.score = TicTacToe.NOT_OVER_SCORE
         self.board_possibilities = {}
 
     # copy constructor
@@ -63,11 +63,11 @@ class TicTacToe:
         valid_size = False
         while not valid_size:
             size_input = raw_input("What size board would you like to play with? (Enter " +
-                               str(MIN_BOARD) + "-" + str(MAX_BOARD) + ") ")
+                               str(TicTacToe.MIN_BOARD) + "-" + str(TicTacToe.MAX_BOARD) + ") ")
             result = re.match("^([0-9]+)$", size_input)
             if result is not None:
                 size = int(result.group(1))
-                if MIN_BOARD <= size <= MAX_BOARD:
+                if TicTacToe.MIN_BOARD <= size <= TicTacToe.MAX_BOARD:
                     valid_size = True
                     return size
                 else:
@@ -107,7 +107,7 @@ class TicTacToe:
     # once valid move received/decided upon, makes move
     def get_move(self):
         # computer's turn: calculates move
-        if self.game_type == COMPUTER_MODE and self.player == self.computer:
+        if self.game_type == TicTacToe.COMPUTER_MODE and self.player == self.computer:
             print "Computer's move: "
             temp_game = self.copy_game()
             ((first_move, second_move), score) = temp_game.do_minimax()
@@ -128,7 +128,7 @@ class TicTacToe:
                         first_move = TicTacToe.convert_to_move(result.group(1))
                         second_move = int(result.group(2)) - 1
                         if 0 <= first_move < self.size and 0 <= second_move < self.size:
-                            if self.board[first_move][second_move] == EMPTY:
+                            if self.board[first_move][second_move] == TicTacToe.EMPTY:
                                 valid_move = True
                             else:
                                 print "Invalid Move: please select an unoccupied space"
@@ -155,13 +155,13 @@ class TicTacToe:
     def do_minimax(self):
         global my_game
         # base case: if end game state, return move and score
-        if self.score != NOT_OVER_SCORE:
+        if self.score != TicTacToe.NOT_OVER_SCORE:
             return self.prev_move, self.score
         # recursive step: make list of possible moves&scores and return expected/best move&score
         scores = []
         for row in range(0, self.size):
             for col in range(0, self.size):
-                if self.board[row][col] == EMPTY:
+                if self.board[row][col] == TicTacToe.EMPTY:
                     new_game = self.copy_game()
                     new_game.make_move(row, col)
                     new_game.get_score()
@@ -200,13 +200,13 @@ class TicTacToe:
     # helper for minimax: gets "score" from perspective of computer (for calculating best move choice)
     def get_score(self):
         self.check_for_winner()
-        if self.winner != EMPTY:
+        if self.winner != TicTacToe.EMPTY:
             if self.winner == self.computer:
-                self.score = COMPUTER_WINS_SCORE
+                self.score = TicTacToe.COMPUTER_WINS_SCORE
             elif self.winner != self.computer:
-                self.score = HUMAN_WINS_SCORE
+                self.score = TicTacToe.HUMAN_WINS_SCORE
         elif self.draw():
-            self.score = DRAW_SCORE
+            self.score = TicTacToe.DRAW_SCORE
 
     # checks if every space has been taken
     def draw(self):
@@ -254,18 +254,14 @@ class TicTacToe:
 
     # switch whose turn it is
     def trade_turns(self):
-        if self.player == XES:
-            self.player = OHS
+        if self.player == TicTacToe.XES:
+            self.player = TicTacToe.OHS
         else:
-            self.player = XES
+            self.player = TicTacToe.XES
 
     # congratulate the winner
     def congratulate_winner(self):
-        if self.game_type == COMPUTER_MODE and self.winner == self.computer:
+        if self.game_type == TicTacToe.COMPUTER_MODE and self.winner == self.computer:
             print "I win!  Play again soon!"
         else:
             print "Congratulations,", self.winner, " you won!"
-
-
-
-
